@@ -17,6 +17,17 @@ docker run -d \
   xiaotanyyds/karin:latest
 ```
 
+### 国内镜像（上面那个下载慢就用这个吧）
+
+```bash
+docker run -d \
+  --name karin \
+  --restart=always \
+  -p 7777:7777 \
+  -v /qq/karin-project/@karinjs:/app/karin-project/@karinjs \
+  registry.cn-shenzhen.aliyuncs.com/xiaotan-images/karin:latest
+```
+
 ### 查看日志
 
 ```bash
@@ -32,13 +43,14 @@ docker exec -it karin /bin/bash
 ## 配置说明
 
 ### 端口说明
+
 - 7777: Karin 服务端口
 
 ### 目录挂载
+
 - `/app/karin-project/@karinjs`: Karin 核心文件目录，包含配置文件和数据
 
 ## 常见问题
-
 
 ## 更新容器
 
