@@ -3,10 +3,8 @@ FROM node:lts-slim
 # 设置工作目录
 WORKDIR /app
 
-# 使用清华源 + 安装运行时依赖
-RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
-    sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
-    apt-get update && \
+# 修正：更可靠的换源方式
+RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     ffmpeg ca-certificates fonts-liberation \
     libasound2 libatk-bridge2.0-0 libatk1.0-0 libc6 libcairo2 \
@@ -19,19 +17,22 @@ RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.li
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 设置 pnpm 环境变量
-ENV PNPM_HOME=/root/.local/share/pnpm
-ENV PATH=$PNPM_HOME:$PATH
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
 # 安装 pnpm 和 Karin CLI（使用淘宝镜像）
 RUN npm install -g pnpm@^9 --registry=https://registry.npmmirror.com && \
+    npm install -g pm2@latest --registry=https://registry.npmmirror.com && \
     mkdir -p $PNPM_HOME && \
-    pnpm config set global-bin-dir $PNPM_HOME && \
-    pnpm add -g @karinjs/cli
+    pnpm add -g @karinjs/cli@latest
 
-# 初始化项目与依赖（注意插件需要放在 workspace 根目录）
-RUN echo '{ "name": "karin-app", "private": true }' > package.json && \
+# 初始化项目与依赖
+
+RUN mkdir -p /app/karin && \
+    cd /app/karin && \
+    pnpm init && \
     pnpm install node-karin && \
-    npx karin init && \
+    ki init && \
     pnpm add \
     @karinjs/plugin-puppeteer \
     @karinjs/plugin-basic \
@@ -39,8 +40,8 @@ RUN echo '{ "name": "karin-app", "private": true }' > package.json && \
     -w
 
 # 设置数据卷
-VOLUME ["/app/@karinjs"]
-RUN mkdir -p /app/@karinjs && chmod -R 755 /app
+VOLUME ["/app/karin"]
+RUN chmod -R 755 /app
 
 # 默认启动命令
-CMD ["pnpm", "app"]
+CMD ["sh", "-c", "cd /app/karin && ki start"]

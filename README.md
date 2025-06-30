@@ -13,7 +13,7 @@ docker run -d \
   --name karin \
   --restart=always \
   -p 7777:7777 \
-  -v /root/karin:/app/@karinjs \
+  -v /root/karin:/app/karin/@karinjs \
   xiaotanyyds/karin:latest
 ```
 
@@ -24,7 +24,7 @@ docker run -d \
   --name karin \
   --restart=always \
   -p 7777:7777 \
-  -v /root/karin:/app/@karinjs \
+  -v /root/karin:/app/karin/@karinjs \
   registry.cn-shenzhen.aliyuncs.com/xiaotan-images/karin:latest
 ```
 
@@ -48,28 +48,7 @@ docker exec -it karin /bin/bash
 
 ### 目录挂载
 
-- `/app/@karinjs`: Karin 核心文件目录，包含配置文件和数据
-
-## 常见问题
-
-## 更新容器
-
-```bash
-# 拉取最新镜像
-docker pull xiaotanyyds/karin:latest
-
-# 停止并删除旧容器
-docker stop karin
-docker rm karin
-
-# 使用新镜像重新创建容器
-docker run -d \
-  --name karin \
-  --restart=always \
-  -p 7777:7777 \
-  -v /root/karin:/app/@karinjs \
-  xiaotanyyds/karin:latest
-```
+- `/app/karin/@karinjs`: Karin 核心文件目录，包含配置文件和数据
 
 ## 相关链接
 

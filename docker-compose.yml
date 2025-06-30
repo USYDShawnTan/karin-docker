@@ -1,0 +1,13 @@
+services:
+  karin:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: karin
+    restart: always
+    ports:
+      - "7777:7777"
+    volumes:
+      - /root/karin:/app/karin/@karinjs
+    environment:
+      - NODE_ENV=production
