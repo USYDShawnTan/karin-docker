@@ -20,10 +20,12 @@ RUN apt-get update && \
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# 安装 pnpm 和 Karin CLI（使用淘宝镜像）
+# 安装 pnpm 和相关工具
 RUN npm install -g pnpm@^9 --registry=https://registry.npmmirror.com && \
     npm install -g pm2@latest --registry=https://registry.npmmirror.com && \
     mkdir -p $PNPM_HOME && \
+    pnpm config set global-bin-dir $PNPM_HOME && \
+    pnpm config set store-dir $PNPM_HOME && \
     pnpm add -g @karinjs/cli@latest
 
 # 初始化项目与依赖

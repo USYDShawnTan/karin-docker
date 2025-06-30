@@ -8,6 +8,6 @@ services:
     ports:
       - "7777:7777"
     volumes:
-      - /root/karin:/app/karin/@karinjs
+      - ./karin:/app/karin/@karinjs
     environment:
       - NODE_ENV=production
