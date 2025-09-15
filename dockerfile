@@ -38,7 +38,7 @@ RUN mkdir -p /app/karin && \
     pnpm add \
     @karinjs/plugin-puppeteer \
     @karinjs/plugin-basic \
-    karin-plugin-kkk@latest \
+    karin-plugin-kkk@1.6.12 \
     -w
 
 # 设置数据卷
@@ -47,3 +47,4 @@ RUN chmod -R 755 /app
 
 # 默认启动命令
 CMD ["sh", "-c", "cd /app/karin && ki start"]
+
