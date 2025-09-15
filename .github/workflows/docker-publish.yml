@@ -1,9 +1,6 @@
 name: Docker Build and Push
 
 on:
-  schedule:
-    # 每天凌晨 2 点运行
-    - cron: '0 2 * * *'
   push:
     branches: [ main ]
     tags: [ 'v*.*.*' ]
@@ -75,3 +72,4 @@ jobs:
           new_image=${{ secrets.ALIYUN_REGISTRY }}/${{ secrets.ALIYUN_NAME_SPACE }}/$(basename ${{ env.IMAGE_NAME }}):latest
           docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest $new_image
           docker push $new_image
+
