@@ -3,7 +3,7 @@ FROM node:lts-slim
 # 设置工作目录
 WORKDIR /app
 
-# 修正：更可靠的换源方式
+# 安装运行依赖 + 中文/Emoji 字体 + locale
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     ffmpeg ca-certificates fonts-liberation \
@@ -13,8 +13,22 @@ RUN apt-get update && \
     libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 \
     libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxss1 libxtst6 \
-    lsb-release wget xdg-utils libxkbcommon0 redis-server && \
+    lsb-release wget xdg-utils libxkbcommon0 redis-server \
+    # === 关键新增：中文/Emoji 字体 + 字体缓存 + locale ===
+    fonts-noto-cjk fonts-noto-color-emoji fonts-dejavu \
+    fonts-wqy-zenhei fonts-wqy-microhei fontconfig locales && \
+    # 生成 UTF-8 本地化
+    sed -i 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen && \
+    # 刷新字体缓存
+    fc-cache -f -v && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 统一设置 UTF-8 环境变量（Locale/Charset）
+ENV LANG=zh_CN.UTF-8 \
+    LANGUAGE=zh_CN:zh \
+    LC_ALL=zh_CN.UTF-8 \
+    TZ=Asia/Shanghai
 
 # 设置 pnpm 环境变量
 ENV PNPM_HOME="/root/.local/share/pnpm"
@@ -29,7 +43,6 @@ RUN npm install -g pnpm@^9 --registry=https://registry.npmmirror.com && \
     pnpm add -g @karinjs/cli@latest
 
 # 初始化项目与依赖
-
 RUN mkdir -p /app/karin && \
     cd /app/karin && \
     pnpm init && \
@@ -46,5 +59,3 @@ RUN chmod -R 755 /app
 
 # 默认启动命令
 CMD ["sh", "-c", "cd /app/karin && ki start"]
-
-
